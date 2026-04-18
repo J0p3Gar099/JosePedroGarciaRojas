@@ -1,0 +1,102 @@
+---
+export interface Props { title?: string }
+const { title = 'Jose Pedro Garcia — Dev' } = Astro.props
+---
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@300;400;500&family=Geist:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style is:global>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --border: #1e1e1e;
+      --border2: #2a2a2a;
+      --text: #e8e8e8;
+      --muted: #555;
+      --accent: #c8f064;
+      --accent2: #64c8f0;
+      --font-serif: 'Instrument Serif', Georgia, serif;
+      --font-sans: 'Geist', sans-serif;
+      --font-mono: 'Geist Mono', monospace;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.7;
+      font-weight: 300;
+      overflow-x: hidden;
+      cursor: none;
+    }
+    ::selection { background: var(--accent); color: #0a0a0a; }
+    #cursor {
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.15s ease;
+      transform: translate(-50%,-50%);
+    }
+    #cursor-ring {
+      width: 32px; height: 32px;
+      border: 1px solid rgba(200,240,100,0.25);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%,-50%);
+      transition: width 0.2s, height 0.2s, border-color 0.2s;
+    }
+    a { color: inherit; text-decoration: none; }
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(28px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.75s cubic-bezier(0.23,1,0.32,1), transform 0.75s cubic-bezier(0.23,1,0.32,1);
+    }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border2); }
+  </style>
+</head>
+<body>
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+  <slot />
+  <script>
+    const cur = document.getElementById('cursor')
+    const ring = document.getElementById('cursor-ring')
+    let mx=0,my=0,rx=0,ry=0
+    document.addEventListener('mousemove', e => {
+      mx=e.clientX; my=e.clientY
+      cur.style.left=mx+'px'; cur.style.top=my+'px'
+    })
+    ;(function loop(){ rx+=(mx-rx)*0.1; ry+=(my-ry)*0.1
+      ring.style.left=rx+'px'; ring.style.top=ry+'px'
+      requestAnimationFrame(loop) })()
+    document.querySelectorAll('a,button,[data-hover]').forEach(el=>{
+      el.addEventListener('mouseenter',()=>{ cur.style.transform='translate(-50%,-50%) scale(2.5)'; ring.style.width='48px'; ring.style.height='48px'; ring.style.borderColor='rgba(200,240,100,0.5)' })
+      el.addEventListener('mouseleave',()=>{ cur.style.transform='translate(-50%,-50%) scale(1)'; ring.style.width='32px'; ring.style.height='32px'; ring.style.borderColor='rgba(200,240,100,0.25)' })
+    })
+    const obs = new IntersectionObserver(entries=>{
+      entries.forEach(e=>{ if(e.isIntersecting){ const d=+(e.target.dataset.delay||0); setTimeout(()=>e.target.classList.add('visible'),d) } })
+    },{threshold:0.08})
+    document.querySelectorAll('.reveal').forEach(el=>obs.observe(el))
+  </script>
+</body>
+</html>
