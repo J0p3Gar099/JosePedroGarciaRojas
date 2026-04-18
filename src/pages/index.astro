@@ -1,105 +1,240 @@
 ---
 import Layout from '../layouts/Layout.astro'
+declare global {
+  interface Window {
+    toggleMenu: () => void
+    closeMobileMenu: () => void
+  }
+}
+
 ---
 <Layout title="Jose Pedro Garcia — Backend Dev">
 
+  
+<style>
+  /* ── NAV ── */
+  nav { position:fixed;top:0;left:0;right:0;z-index:100;padding:1.25rem 2.5rem;display:flex;justify-content:space-between;align-items:center;transition:border-color .3s,background .3s }
+  .nav-links { display:flex;gap:2rem }
+  .nav-links a { font-size:13px;color:var(--muted);transition:color .2s }
+  .nav-links a:hover { color:var(--text) }
+  .nav-logo { font-family:var(--font-mono);font-size:12px;color:var(--muted);letter-spacing:.1em }
+
+  /* ── HERO ── */
+  .hero { min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 2.5rem 5rem;position:relative;overflow:hidden }
+  .hero-grid { position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:80px 80px;opacity:.4;pointer-events:none }
+  .hero-glow { position:absolute;top:20%;right:10%;width:400px;height:400px;background:radial-gradient(circle,rgba(200,240,100,.06) 0%,transparent 70%);pointer-events:none }
+  .hero-content { position:relative;max-width:900px }
+  .hero-tag { font-family:var(--font-mono);font-size:12px;color:var(--accent);letter-spacing:.15em;margin-bottom:1.5rem }
+  .hero-title { font-family:var(--font-serif);font-size:clamp(3rem,8vw,7rem);line-height:1.05;font-weight:400;margin-bottom:1.5rem }
+  .hero-title span { display:block }
+  .hero-desc { max-width:540px;color:var(--muted);font-size:16px;line-height:1.8;margin-bottom:3rem }
+  .hero-actions { display:flex;gap:1rem;align-items:center;flex-wrap:wrap }
+  .btn-primary { display:inline-flex;align-items:center;gap:8px;padding:.75rem 1.5rem;background:var(--accent);color:#0a0a0a;font-size:13px;font-weight:500;border-radius:2px;transition:opacity .2s }
+  .btn-primary:hover { opacity:.85 }
+  .hero-phone { font-family:var(--font-mono);font-size:12px;color:var(--muted) }
+  .hero-scroll { position:absolute;bottom:2.5rem;right:2.5rem;display:flex;flex-direction:column;align-items:center;gap:8px }
+  .hero-scroll span { font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:.15em;writing-mode:vertical-rl }
+  .hero-scroll-line { width:1px;height:48px;background:linear-gradient(to bottom,var(--muted),transparent) }
+
+  /* ── ABOUT STRIP ── */
+  .about { padding:4rem 2.5rem;border-top:1px solid var(--border);display:flex;gap:3rem;flex-wrap:wrap }
+  .about-item { flex:0 0 170px }
+  .about-label { font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:.15em;margin-bottom:.5rem }
+  .about-val { font-size:14px }
+  .about-sub { font-size:12px;color:var(--muted) }
+
+  /* ── SECTION HEADER ── */
+  .sec-header { display:flex;align-items:center;gap:1.5rem;margin-bottom:4rem }
+  .sec-tag { font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:.15em;white-space:nowrap }
+  .sec-line { flex:1;height:1px;background:var(--border) }
+
+  /* ── EXPERIENCIA ── */
+  .exp-section { padding:6rem 2.5rem;border-top:1px solid var(--border) }
+  .exp-inner { max-width:900px;margin:0 auto }
+  .exp-article { display:grid;grid-template-columns:200px 1fr;gap:3rem;padding:2.5rem 0;border-bottom:1px solid var(--border) }
+  .exp-article:last-child { border-bottom:none }
+  .exp-date { font-family:var(--font-mono);font-size:11px;color:var(--accent);margin-bottom:.5rem }
+  .exp-company { font-size:14px;margin-bottom:.25rem }
+  .exp-location { font-size:12px;color:var(--muted) }
+  .exp-title { font-family:var(--font-serif);font-size:1.5rem;font-weight:400;margin-bottom:1rem }
+  .exp-list { list-style:none;display:flex;flex-direction:column;gap:.6rem }
+  .exp-item { display:flex;gap:.75rem;align-items:baseline;font-size:14px;color:var(--muted) }
+  .exp-tag { font-family:var(--font-mono);font-size:10px;flex-shrink:0;margin-top:3px }
+
+  /* ── SKILLS ── */
+  .skills-section { padding:6rem 2.5rem;border-top:1px solid var(--border);background:var(--surface) }
+  .skills-inner { max-width:900px;margin:0 auto }
+  .skills-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:2px }
+  .skill-card { background:var(--bg);padding:1.75rem;border:1px solid var(--border) }
+  .skill-cat { font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:.12em;margin-bottom:1rem }
+  .skill-list { list-style:none;display:flex;flex-direction:column;gap:.5rem }
+  .skill-item { font-size:14px;display:flex;align-items:center;gap:8px }
+  .skill-dot { width:4px;height:4px;background:var(--accent);border-radius:50%;flex-shrink:0 }
+
+  /* ── MÉTRICAS ── */
+  .metrics-section { padding:6rem 2.5rem;border-top:1px solid var(--border) }
+  .metrics-inner { max-width:900px;margin:0 auto }
+  .metrics-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:2px }
+  .metric-card { padding:2rem 1.5rem;border:1px solid var(--border);position:relative;overflow:hidden }
+  .metric-bar { position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent) }
+  .metric-num { font-family:var(--font-serif);font-size:2.5rem;font-weight:400;color:var(--accent);margin-bottom:.75rem;line-height:1 }
+  .metric-label { font-size:13px;color:var(--muted);line-height:1.5 }
+
+  /* ── CONTACTO ── */
+  .contact-section { padding:6rem 2.5rem 8rem;border-top:1px solid var(--border);background:var(--surface) }
+  .contact-inner { max-width:900px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center }
+  .contact-title { font-family:var(--font-serif);font-size:clamp(2rem,4vw,3.5rem);font-weight:400;line-height:1.1;margin-bottom:1.5rem }
+  .contact-desc { color:var(--muted);font-size:14px;max-width:360px }
+  .contact-cards { display:flex;flex-direction:column;gap:1rem }
+  .contact-card { display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border:1px solid var(--border);transition:border-color .2s,background .2s }
+  .contact-card:hover { border-color:var(--accent);background:rgba(200,240,100,.04) }
+  .contact-card-label { font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:.12em;margin-bottom:2px }
+  .contact-card-val { font-size:14px }
+
+  /* ── FOOTER ── */
+  footer { padding:2rem 2.5rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem }
+  footer span { font-family:var(--font-mono);font-size:11px;color:var(--muted) }
+
+  /* ── HAMBURGER ── */
+  .hamburger { display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px }
+  .hamburger span { width:22px;height:1.5px;background:var(--text);transition:all .3s }
+  .mobile-menu { display:none;position:fixed;inset:0;background:var(--bg);z-index:99;flex-direction:column;justify-content:center;align-items:center;gap:2.5rem }
+  .mobile-menu.open { display:flex }
+  .mobile-menu a { font-family:var(--font-serif);font-size:2rem;color:var(--text) }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding:1rem 1.25rem }
+    .nav-links { display:none }
+    .hamburger { display:flex }
+
+    .hero { padding:0 1.25rem 4rem;min-height:100svh }
+    .hero-title { font-size:clamp(2.5rem,12vw,4rem) }
+    .hero-desc { font-size:14px }
+    .hero-scroll { display:none }
+
+    .about { padding:2.5rem 1.25rem;gap:2rem }
+    .about-item { flex:0 0 calc(50% - 1rem) }
+
+    .exp-section { padding:4rem 1.25rem }
+    .exp-article { grid-template-columns:1fr;gap:1rem }
+
+    .skills-section { padding:4rem 1.25rem }
+    .skills-grid { grid-template-columns:repeat(2,1fr) }
+
+    .metrics-section { padding:4rem 1.25rem }
+    .metrics-grid { grid-template-columns:repeat(2,1fr) }
+    .metric-num { font-size:2rem }
+
+    .contact-section { padding:4rem 1.25rem 5rem }
+    .contact-inner { grid-template-columns:1fr;gap:2.5rem }
+
+    footer { padding:1.5rem 1.25rem;flex-direction:column;align-items:flex-start;gap:.5rem }
+  }
+
+  @media (max-width: 480px) {
+    .about-item { flex:0 0 100% }
+    .skills-grid { grid-template-columns:1fr }
+    .metrics-grid { grid-template-columns:1fr 1fr }
+    .hero-actions { flex-direction:column;align-items:flex-start }
+  }
+</style>
+
+<!-- HAMBURGER MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#experiencia" onclick="closeMobileMenu()">Experiencia</a>
+  <a href="#skills" onclick="closeMobileMenu()">Skills</a>
+  <a href="#contacto" onclick="closeMobileMenu()">Contacto</a>
+</div>
+
 <!-- NAV -->
-<nav style="position:fixed;top:0;left:0;right:0;z-index:100;padding:1.5rem 2.5rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid transparent;transition:border-color 0.3s,background 0.3s" id="nav">
-  <span style="font-family:var(--font-mono);font-size:12px;color:var(--muted);letter-spacing:0.1em">JPG.dev</span>
-  <div style="display:flex;gap:2rem">
-    <a href="#experiencia" style="font-size:13px;color:var(--muted);transition:color 0.2s" onmouseenter="this.style.color='var(--text)'" onmouseleave="this.style.color='var(--muted)'">Experiencia</a>
-    <a href="#skills" style="font-size:13px;color:var(--muted);transition:color 0.2s" onmouseenter="this.style.color='var(--text)'" onmouseleave="this.style.color='var(--muted)'">Skills</a>
-    <a href="#contacto" style="font-size:13px;color:var(--muted);transition:color 0.2s" onmouseenter="this.style.color='var(--text)'" onmouseleave="this.style.color='var(--muted)'">Contacto</a>
+<nav id="nav">
+  <span class="nav-logo">JPG.dev</span>
+  <div class="nav-links">
+    <a href="#experiencia">Experiencia</a>
+    <a href="#skills">Skills</a>
+    <a href="#contacto">Contacto</a>
+  </div>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
   </div>
 </nav>
 
 <!-- HERO -->
-<section style="min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 2.5rem 5rem;position:relative;overflow:hidden">
-
-  <!-- Background grid -->
-  <div style="position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:80px 80px;opacity:0.4;pointer-events:none"></div>
-
-  <!-- Accent glow -->
-  <div style="position:absolute;top:20%;right:10%;width:400px;height:400px;background:radial-gradient(circle,rgba(200,240,100,0.06) 0%,transparent 70%);pointer-events:none"></div>
-
-  <div style="position:relative;max-width:900px">
-    <p class="reveal" data-delay="100" style="font-family:var(--font-mono);font-size:12px;color:var(--accent);letter-spacing:0.15em;margin-bottom:1.5rem">— Desarrollador Backend · .NET / C#</p>
-
-    <h1 style="font-family:var(--font-serif);font-size:clamp(3.5rem,8vw,7rem);line-height:1.05;font-weight:400;margin-bottom:1.5rem">
-      <span class="reveal" data-delay="150" style="display:block">Jose Pedro</span>
-      <span class="reveal" data-delay="250" style="display:block;color:var(--muted)">Garcia Rojas</span>
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-content">
+    <p class="hero-tag reveal" data-delay="100">— Desarrollador Backend · .NET / C#</p>
+    <h1 class="hero-title">
+      <span class="reveal" data-delay="150">Jose Pedro</span>
+      <span class="reveal" data-delay="250" style="color:var(--muted)">Garcia Rojas</span>
     </h1>
-
-    <p class="reveal" data-delay="380" style="max-width:540px;color:var(--muted);font-size:16px;line-height:1.8;margin-bottom:3rem">
+    <p class="hero-desc reveal" data-delay="380">
       Más de <span style="color:var(--text)">4 años</span> construyendo sistemas empresariales robustos. Especializado en APIs REST, optimización SQL y arquitecturas escalables en <span style="color:var(--text)">.NET / C#</span>.
     </p>
-
-    <div class="reveal" data-delay="480" style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap">
-      <a href="mailto:josepedrogr.99@gmail.com" style="display:inline-flex;align-items:center;gap:8px;padding:0.75rem 1.5rem;background:var(--accent);color:#0a0a0a;font-size:13px;font-weight:500;border-radius:2px;transition:opacity 0.2s" onmouseenter="this.style.opacity='0.85'" onmouseleave="this.style.opacity='1'">
+    <div class="hero-actions reveal" data-delay="480">
+      <a href="mailto:josepedrogr.99@gmail.com" class="btn-primary">
         Contactar
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
-      <span style="font-family:var(--font-mono);font-size:12px;color:var(--muted)">55 3653 8782</span>
+      <span class="hero-phone">55 3653 8782</span>
     </div>
   </div>
-
-  <!-- Scroll hint -->
-  <div style="position:absolute;bottom:2.5rem;right:2.5rem;display:flex;flex-direction:column;align-items:center;gap:8px">
-    <span style="font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:0.15em;writing-mode:vertical-rl">SCROLL</span>
-    <div style="width:1px;height:48px;background:linear-gradient(to bottom,var(--muted),transparent)"></div>
+  <div class="hero-scroll">
+    <span>SCROLL</span>
+    <div class="hero-scroll-line"></div>
   </div>
 </section>
 
-<!-- ABOUT STRIP -->
-<section style="padding:4rem 2.5rem;border-top:1px solid var(--border);display:flex;gap:4rem;align-items:flex-start;flex-wrap:wrap">
-  <div class="reveal" style="flex:0 0 180px">
-    <p style="font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:0.15em;margin-bottom:0.75rem">UBICACIÓN</p>
-    <p style="font-size:14px">Cuautitlán, México</p>
+<!-- ABOUT -->
+<section class="about">
+  <div class="about-item reveal">
+    <p class="about-label">UBICACIÓN</p>
+    <p class="about-val">Cuautitlán, México</p>
   </div>
-  <div class="reveal" data-delay="80" style="flex:0 0 180px">
-    <p style="font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:0.15em;margin-bottom:0.75rem">EDUCACIÓN</p>
-    <p style="font-size:14px">Ing. Sistemas Computacionales</p>
-    <p style="font-size:12px;color:var(--muted)">TESCI · 2024</p>
+  <div class="about-item reveal" data-delay="80">
+    <p class="about-label">EDUCACIÓN</p>
+    <p class="about-val">Ing. Sistemas Computacionales</p>
+    <p class="about-sub">TESCI · 2024</p>
   </div>
-  <div class="reveal" data-delay="160" style="flex:0 0 180px">
-    <p style="font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:0.15em;margin-bottom:0.75rem">EXPERIENCIA</p>
-    <p style="font-size:14px">4+ años</p>
-    <p style="font-size:12px;color:var(--muted)">Backend · Sistemas empresariales</p>
+  <div class="about-item reveal" data-delay="160">
+    <p class="about-label">EXPERIENCIA</p>
+    <p class="about-val">4+ años</p>
+    <p class="about-sub">Backend · Sistemas empresariales</p>
   </div>
-  <div class="reveal" data-delay="240" style="flex:0 0 180px">
-    <p style="font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:0.15em;margin-bottom:0.75rem">IDIOMAS</p>
-    <p style="font-size:14px">Español · Inglés técnico</p>
+  <div class="about-item reveal" data-delay="240">
+    <p class="about-label">IDIOMAS</p>
+    <p class="about-val">Español · Inglés técnico</p>
   </div>
 </section>
 
 <!-- EXPERIENCIA -->
-<section id="experiencia" style="padding:6rem 2.5rem;border-top:1px solid var(--border)">
-  <div style="max-width:900px;margin:0 auto">
-
-    <div class="reveal" style="display:flex;align-items:center;gap:1.5rem;margin-bottom:4rem">
-      <p style="font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:0.15em">02 — EXPERIENCIA</p>
-      <div style="flex:1;height:1px;background:var(--border)"></div>
+<section id="experiencia" class="exp-section">
+  <div class="exp-inner">
+    <div class="sec-header reveal">
+      <p class="sec-tag">02 — EXPERIENCIA</p>
+      <div class="sec-line"></div>
     </div>
 
-    <!-- Job 1 -->
-    <article class="reveal" style="display:grid;grid-template-columns:200px 1fr;gap:3rem;padding:2.5rem 0;border-bottom:1px solid var(--border)">
+    <article class="exp-article reveal">
       <div>
-        <p style="font-family:var(--font-mono);font-size:11px;color:var(--accent);margin-bottom:0.5rem">May 2024 — Dic 2025</p>
-        <p style="font-size:14px;font-weight:400;margin-bottom:0.25rem">Goncalves</p>
-        <p style="font-size:12px;color:var(--muted)">Tepotzotlán, México</p>
+        <p class="exp-date">May 2024 — Dic 2025</p>
+        <p class="exp-company">Goncalves</p>
+        <p class="exp-location">Tepotzotlán, México</p>
       </div>
       <div>
-        <h3 style="font-family:var(--font-serif);font-size:1.6rem;font-weight:400;margin-bottom:1rem">Desarrollador C# / .NET</h3>
-        <ul style="list-style:none;display:flex;flex-direction:column;gap:0.6rem">
+        <h3 class="exp-title">Desarrollador C# / .NET</h3>
+        <ul class="exp-list">
           {[
-            ['APIs REST', 'Diseño e implementación reduciendo tiempos de integración ~25%'],
-            ['PL/SQL', 'Optimización de consultas, reduciendo tiempos de respuesta 30–40%'],
-            ['ASP.NET Core', 'Desarrollo de funcionalidades backend en sistemas críticos multiárea'],
-            ['Producción', 'Mantenimiento correctivo reduciendo tiempos de resolución 20%'],
-            ['Calidad', 'Integración de nuevas funcionalidades reduciendo errores ~15%'],
-          ].map(([tag, desc]) => (
-            <li style="display:flex;gap:0.75rem;align-items:baseline;font-size:14px;color:var(--muted)">
-              <span style="font-family:var(--font-mono);font-size:10px;color:var(--accent);flex-shrink:0;margin-top:3px">{tag}</span>
+            ['APIs REST','Diseño e implementación reduciendo tiempos de integración ~25%'],
+            ['PL/SQL','Optimización de consultas, reduciendo tiempos de respuesta 30–40%'],
+            ['ASP.NET Core','Desarrollo de funcionalidades backend en sistemas críticos multiárea'],
+            ['Producción','Mantenimiento correctivo reduciendo tiempos de resolución 20%'],
+            ['Calidad','Integración de nuevas funcionalidades reduciendo errores ~15%'],
+          ].map(([tag,desc])=>(
+            <li class="exp-item">
+              <span class="exp-tag" style="color:var(--accent)">{tag}</span>
               <span>{desc}</span>
             </li>
           ))}
@@ -107,24 +242,23 @@ import Layout from '../layouts/Layout.astro'
       </div>
     </article>
 
-    <!-- Job 2 -->
-    <article class="reveal" data-delay="100" style="display:grid;grid-template-columns:200px 1fr;gap:3rem;padding:2.5rem 0;border-bottom:1px solid var(--border)">
+    <article class="exp-article reveal" data-delay="100">
       <div>
-        <p style="font-family:var(--font-mono);font-size:11px;color:var(--accent);margin-bottom:0.5rem">Jul 2023 — Jul 2024</p>
-        <p style="font-size:14px;font-weight:400;margin-bottom:0.25rem">DITER</p>
-        <p style="font-size:12px;color:var(--muted)">Cuautitlán Izcalli, México</p>
+        <p class="exp-date">Jul 2023 — Jul 2024</p>
+        <p class="exp-company">DITER</p>
+        <p class="exp-location">Cuautitlán Izcalli, México</p>
       </div>
       <div>
-        <h3 style="font-family:var(--font-serif);font-size:1.6rem;font-weight:400;margin-bottom:1rem">Desarrollador Web (Backend)</h3>
-        <ul style="list-style:none;display:flex;flex-direction:column;gap:0.6rem">
+        <h3 class="exp-title">Desarrollador Web (Backend)</h3>
+        <ul class="exp-list">
           {[
-            ['Java / Spring', 'Backend con lógica de negocio para procesos operativos críticos, +20% eficiencia'],
-            ['Angular', 'Interfaces dinámicas integradas con APIs REST, reduciendo tiempos de interacción'],
-            ['MS Access', 'Optimización de consultas y gestión de base de datos, -15% tiempos de carga'],
-            ['Agile', 'Metodologías ágiles contribuyendo a reducir tiempos de desarrollo ~20%'],
-          ].map(([tag, desc]) => (
-            <li style="display:flex;gap:0.75rem;align-items:baseline;font-size:14px;color:var(--muted)">
-              <span style="font-family:var(--font-mono);font-size:10px;color:var(--accent2);flex-shrink:0;margin-top:3px">{tag}</span>
+            ['Java/Spring','Backend con lógica de negocio para procesos operativos, +20% eficiencia'],
+            ['Angular','Interfaces dinámicas integradas con APIs REST'],
+            ['MS Access','Optimización de consultas y gestión de BD, -15% tiempos de carga'],
+            ['Agile','Metodologías ágiles reduciendo tiempos de desarrollo ~20%'],
+          ].map(([tag,desc])=>(
+            <li class="exp-item">
+              <span class="exp-tag" style="color:var(--accent2)">{tag}</span>
               <span>{desc}</span>
             </li>
           ))}
@@ -132,156 +266,167 @@ import Layout from '../layouts/Layout.astro'
       </div>
     </article>
 
-    <!-- Job 3 -->
-    <article class="reveal" data-delay="200" style="display:grid;grid-template-columns:200px 1fr;gap:3rem;padding:2.5rem 0">
+    <article class="exp-article reveal" data-delay="200">
       <div>
-        <p style="font-family:var(--font-mono);font-size:11px;color:var(--accent);margin-bottom:0.5rem">Mar 2021 — Nov 2023</p>
-        <p style="font-size:14px;font-weight:400;margin-bottom:0.25rem">Freelance</p>
-        <p style="font-size:12px;color:var(--muted)">Remoto</p>
+        <p class="exp-date">Mar 2021 — Nov 2023</p>
+        <p class="exp-company">Freelance</p>
+        <p class="exp-location">Remoto</p>
       </div>
       <div>
-        <h3 style="font-family:var(--font-serif);font-size:1.6rem;font-weight:400;margin-bottom:1rem">Desarrollo Backend & Web</h3>
-        <ul style="list-style:none;display:flex;flex-direction:column;gap:0.6rem">
+        <h3 class="exp-title">Desarrollo Backend & Web</h3>
+        <ul class="exp-list">
           {[
-            ['End-to-end', 'Levantamiento de requerimientos y diseño de soluciones, -25% retrabajos'],
-            ['Performance', 'Mejoras de rendimiento logrando incrementos de velocidad de carga hasta 30%'],
-            ['UX', 'Optimización de experiencia de usuario, reduciendo incidencias reportadas'],
-          ].map(([tag, desc]) => (
-            <li style="display:flex;gap:0.75rem;align-items:baseline;font-size:14px;color:var(--muted)">
-              <span style="font-family:var(--font-mono);font-size:10px;color:var(--muted);flex-shrink:0;margin-top:3px">{tag}</span>
+            ['End-to-end','Levantamiento de requerimientos y diseño de soluciones, -25% retrabajos'],
+            ['Performance','Mejoras de rendimiento logrando +30% velocidad de carga'],
+            ['UX','Optimización de experiencia reduciendo incidencias reportadas'],
+          ].map(([tag,desc])=>(
+            <li class="exp-item">
+              <span class="exp-tag" style="color:var(--muted)">{tag}</span>
               <span>{desc}</span>
             </li>
           ))}
         </ul>
       </div>
     </article>
-
   </div>
 </section>
 
 <!-- SKILLS -->
-<section id="skills" style="padding:6rem 2.5rem;border-top:1px solid var(--border);background:var(--surface)">
-  <div style="max-width:900px;margin:0 auto">
-
-    <div class="reveal" style="display:flex;align-items:center;gap:1.5rem;margin-bottom:4rem">
-      <p style="font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:0.15em">03 — TECNOLOGÍAS</p>
-      <div style="flex:1;height:1px;background:var(--border)"></div>
+<section id="skills" class="skills-section">
+  <div class="skills-inner">
+    <div class="sec-header reveal">
+      <p class="sec-tag">03 — TECNOLOGÍAS</p>
+      <div class="sec-line"></div>
     </div>
-
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2px">
+    <div class="skills-grid">
       {[
-        { cat: 'Lenguajes',     items: ['C#', 'SQL', 'Java', 'JavaScript'] },
-        { cat: 'Backend',       items: ['ASP.NET Core', 'Web API', '.NET Core', 'Spring Boot'] },
-        { cat: 'Frontend',      items: ['Angular', 'HTML', 'CSS / SASS', 'TypeScript'] },
-        { cat: 'Bases de datos',items: ['SQL Server', 'Oracle', 'PL/SQL', 'MS Access'] },
-        { cat: 'Arquitectura',  items: ['APIs REST', 'N-Tier', 'Microservicios'] },
-        { cat: 'Herramientas',  items: ['Git', 'Azure DevOps', 'Figma'] },
-      ].map((group, gi) => (
-        <div class="reveal" data-delay={gi * 60} style="background:var(--bg);padding:1.75rem;border:1px solid var(--border)">
-          <p style="font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:0.12em;margin-bottom:1rem">{group.cat.toUpperCase()}</p>
-          <ul style="list-style:none;display:flex;flex-direction:column;gap:0.5rem">
-            {group.items.map(item => (
-              <li style="font-size:14px;color:var(--text);display:flex;align-items:center;gap:8px">
-                <span style="width:4px;height:4px;background:var(--accent);border-radius:50%;flex-shrink:0"></span>
-                {item}
+        {cat:'Lenguajes',    items:['C#','SQL','Java','JavaScript']},
+        {cat:'Backend',      items:['ASP.NET Core','Web API','.NET Core','Spring Boot']},
+        {cat:'Frontend',     items:['Angular','HTML','CSS / SASS','TypeScript']},
+        {cat:'Bases de datos',items:['SQL Server','Oracle','PL/SQL','MS Access']},
+        {cat:'Arquitectura', items:['APIs REST','N-Tier','Microservicios']},
+        {cat:'Herramientas', items:['Git','Azure DevOps','Figma']},
+      ].map((g,i)=>(
+        <div class="skill-card reveal" data-delay={i*60}>
+          <p class="skill-cat">{g.cat.toUpperCase()}</p>
+          <ul class="skill-list">
+            {g.items.map(item=>(
+              <li class="skill-item">
+                <span class="skill-dot"></span>{item}
               </li>
             ))}
           </ul>
         </div>
       ))}
     </div>
-
   </div>
 </section>
 
 <!-- MÉTRICAS -->
-<section style="padding:6rem 2.5rem;border-top:1px solid var(--border)">
-  <div style="max-width:900px;margin:0 auto">
-
-    <div class="reveal" style="display:flex;align-items:center;gap:1.5rem;margin-bottom:4rem">
-      <p style="font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:0.15em">04 — IMPACTO</p>
-      <div style="flex:1;height:1px;background:var(--border)"></div>
+<section class="metrics-section">
+  <div class="metrics-inner">
+    <div class="sec-header reveal">
+      <p class="sec-tag">04 — IMPACTO</p>
+      <div class="sec-line"></div>
     </div>
-
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2px">
+    <div class="metrics-grid">
       {[
-        { n: '30–40%', label: 'reducción en tiempos de consultas SQL' },
-        { n: '25%',    label: 'menos tiempo de integración entre módulos' },
-        { n: '20%',    label: 'reducción en tiempo de resolución de incidencias' },
-        { n: '4+',     label: 'años de experiencia en sistemas empresariales' },
-      ].map((m, i) => (
-        <div class="reveal" data-delay={i * 80} style="padding:2rem 1.5rem;border:1px solid var(--border);position:relative;overflow:hidden">
-          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent)"></div>
-          <p style="font-family:var(--font-serif);font-size:2.5rem;font-weight:400;color:var(--accent);margin-bottom:0.75rem;line-height:1">{m.n}</p>
-          <p style="font-size:13px;color:var(--muted);line-height:1.5">{m.label}</p>
+        {n:'30–40%', label:'reducción en tiempos de consultas SQL'},
+        {n:'25%',    label:'menos tiempo de integración entre módulos'},
+        {n:'20%',    label:'reducción en resolución de incidencias'},
+        {n:'4+',     label:'años de experiencia en sistemas empresariales'},
+      ].map((m,i)=>(
+        <div class="metric-card reveal" data-delay={i*80}>
+          <div class="metric-bar"></div>
+          <p class="metric-num">{m.n}</p>
+          <p class="metric-label">{m.label}</p>
         </div>
       ))}
     </div>
-
   </div>
 </section>
 
 <!-- CONTACTO -->
-<section id="contacto" style="padding:6rem 2.5rem 8rem;border-top:1px solid var(--border);background:var(--surface)">
-  <div style="max-width:900px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center">
-
+<section id="contacto" class="contact-section">
+  <div class="contact-inner">
     <div>
-      <p class="reveal" style="font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:0.15em;margin-bottom:1.5rem">05 — CONTACTO</p>
-      <h2 class="reveal" data-delay="100" style="font-family:var(--font-serif);font-size:clamp(2rem,4vw,3.5rem);font-weight:400;line-height:1.1;margin-bottom:1.5rem">
+      <p class="reveal" style="font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:.15em;margin-bottom:1.5rem">05 — CONTACTO</p>
+      <h2 class="contact-title reveal" data-delay="100">
         Hablemos de<br/><em>tu próximo proyecto.</em>
       </h2>
-      <p class="reveal" data-delay="200" style="color:var(--muted);font-size:14px;max-width:360px">
+      <p class="contact-desc reveal" data-delay="200">
         Disponible para oportunidades full-time o proyectos freelance. Enfocado en backend robusto y APIs de alto rendimiento.
       </p>
     </div>
-
-    <div class="reveal" data-delay="150" style="display:flex;flex-direction:column;gap:1rem">
-      <a href="mailto:josepedrogr.99@gmail.com" style="display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border:1px solid var(--border);transition:border-color 0.2s,background 0.2s" onmouseenter="this.style.borderColor='var(--accent)';this.style.background='rgba(200,240,100,0.04)'" onmouseleave="this.style.borderColor='var(--border)';this.style.background='transparent'">
+    <div class="contact-cards reveal" data-delay="150">
+      <a href="mailto:josepedrogr.99@gmail.com" class="contact-card">
         <div>
-          <p style="font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:0.12em;margin-bottom:2px">EMAIL</p>
-          <p style="font-size:14px">josepedrogr.99@gmail.com</p>
+          <p class="contact-card-label">EMAIL</p>
+          <p class="contact-card-val">josepedrogr.99@gmail.com</p>
         </div>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
-
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border:1px solid var(--border)">
+      <div class="contact-card">
         <div>
-          <p style="font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:0.12em;margin-bottom:2px">TELÉFONO</p>
-          <p style="font-size:14px">55 3653 8782</p>
+          <p class="contact-card-label">TELÉFONO</p>
+          <p class="contact-card-val">55 3653 8782</p>
         </div>
       </div>
-
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border:1px solid var(--border)">
+      <div class="contact-card">
         <div>
-          <p style="font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:0.12em;margin-bottom:2px">UBICACIÓN</p>
-          <p style="font-size:14px">Cuautitlán, Estado de México</p>
+          <p class="contact-card-label">UBICACIÓN</p>
+          <p class="contact-card-val">Cuautitlán, Estado de México</p>
         </div>
       </div>
     </div>
-
   </div>
 </section>
 
 <!-- FOOTER -->
-<footer style="padding:2rem 2.5rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
-  <span style="font-family:var(--font-mono);font-size:11px;color:var(--muted)">© 2026 Jose Pedro Garcia Rojas</span>
-  <span style="font-family:var(--font-mono);font-size:11px;color:var(--muted)">Backend Developer · .NET / C#</span>
+<footer>
+  <span>© 2026 Jose Pedro Garcia Rojas</span>
+  <span>Backend Developer · .NET / C#</span>
 </footer>
 
 <script>
-  // Navbar scroll effect
+  // Navbar scroll
   const nav = document.getElementById('nav')
   window.addEventListener('scroll', () => {
+    if (!nav) return
     if (window.scrollY > 60) {
-      nav.style.borderBottomColor = 'var(--border)'
+      nav.style.borderBottom = '1px solid var(--border)'
       nav.style.background = 'rgba(10,10,10,0.92)'
       nav.style.backdropFilter = 'blur(12px)'
     } else {
-      nav.style.borderBottomColor = 'transparent'
+      nav.style.borderBottom = '1px solid transparent'
       nav.style.background = 'transparent'
       nav.style.backdropFilter = 'none'
     }
   })
+
+  // Mobile menu
+  function toggleMenu() {
+    const menu = document.getElementById('mobileMenu')
+    const ham = document.getElementById('hamburger')
+    if (!menu || !ham) return
+    const isOpen = menu.classList.toggle('open')
+    const spans = ham.querySelectorAll('span')
+    if (isOpen) {
+      spans[0].style.transform = 'rotate(45deg) translate(5px,5px)'
+      spans[1].style.opacity = '0'
+      spans[2].style.transform = 'rotate(-45deg) translate(5px,-5px)'
+    } else {
+      spans.forEach(s => { s.style.transform = ''; s.style.opacity = '' })
+    }
+  }
+  function closeMobileMenu() {
+    const menu = document.getElementById('mobileMenu')
+    if (menu) menu.classList.remove('open')
+    const spans = document.querySelectorAll('.hamburger span')
+    spans.forEach(s => { (s as HTMLElement).style.transform = ''; (s as HTMLElement).style.opacity = '' })
+  }
+  window.toggleMenu = toggleMenu
+  window.closeMobileMenu = closeMobileMenu
 </script>
 
 </Layout>
