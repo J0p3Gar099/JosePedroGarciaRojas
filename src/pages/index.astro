@@ -1,5 +1,29 @@
 ---
 import Layout from '../layouts/Layout.astro'
+const iconMap = {
+  'C#': 'csharp',
+  'SQL': 'postgresql',
+  'Java': 'java',
+  'JavaScript': 'javascript',
+  'ASP.NET Core': 'dotnet',
+  'Web API': 'dotnet',
+  '.NET Core': 'dotnet',
+  'Spring Boot': 'springboot',
+  'Angular': 'angular',
+  'HTML': 'html5',
+  'CSS / SASS': 'sass',
+  'TypeScript': 'typescript',
+  'SQL Server': 'microsoftsqlserver',
+  'Oracle': 'oracle',
+  'PL/SQL': 'oracle',
+  'MS Access': 'microsoftaccess',
+  'APIs REST': 'fastapi',
+  'N-Tier': 'dotnet',
+  'Microservicios': 'docker',
+  'Git': 'git',
+  'Azure DevOps': 'azuredevops',
+  'Figma': 'figma'
+}
 declare global {
   interface Window {
     toggleMenu: () => void
@@ -178,7 +202,7 @@ declare global {
         Contactar
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
-      <span class="hero-phone">55 3653 8782</span>
+     
     </div>
   </div>
   <div class="hero-scroll">
@@ -290,7 +314,6 @@ declare global {
     </article>
   </div>
 </section>
-
 <!-- SKILLS -->
 <section id="skills" class="skills-section">
   <div class="skills-inner">
@@ -298,6 +321,8 @@ declare global {
       <p class="sec-tag">03 — TECNOLOGÍAS</p>
       <div class="sec-line"></div>
     </div>
+
+
     <div class="skills-grid">
       {[
         {cat:'Lenguajes',    items:['C#','SQL','Java','JavaScript']},
@@ -312,7 +337,14 @@ declare global {
           <ul class="skill-list">
             {g.items.map(item=>(
               <li class="skill-item">
-                <span class="skill-dot"></span>{item}
+                <img 
+                  src={`https://cdn.simpleicons.org/${iconMap[item] || item.toLowerCase()}`} 
+                  alt={item}
+                  width="16"
+                  height="16"
+                  loading="lazy"
+                />
+                {item}
               </li>
             ))}
           </ul>
@@ -321,7 +353,6 @@ declare global {
     </div>
   </div>
 </section>
-
 <!-- MÉTRICAS -->
 <section class="metrics-section">
   <div class="metrics-inner">
