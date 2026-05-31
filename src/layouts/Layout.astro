@@ -3,7 +3,7 @@ export interface Props { title?: string }
 const { title = 'Jose Pedro Garcia — Dev' } = Astro.props
 ---
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,7 +13,9 @@ const { title = 'Jose Pedro Garcia — Dev' } = Astro.props
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@300;400;500&family=Geist:wght@300;400;500&display=swap" rel="stylesheet" />
   <style is:global>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
+
+    /* ── DARK (default) ── */
+    :root, [data-theme="dark"] {
       --bg: #0a0a0a;
       --surface: #111111;
       --border: #1e1e1e;
@@ -26,7 +28,20 @@ const { title = 'Jose Pedro Garcia — Dev' } = Astro.props
       --font-sans: 'Geist', sans-serif;
       --font-mono: 'Geist Mono', monospace;
     }
-    html { scroll-behavior: smooth; }
+
+    /* ── LIGHT ── */
+    [data-theme="light"] {
+      --bg: #f5f5f0;
+      --surface: #ebebE6;
+      --border: #d8d8d0;
+      --border2: #c8c8c0;
+      --text: #111111;
+      --muted: #888;
+      --accent: #5a8a00;
+      --accent2: #0070a8;
+    }
+
+    html { scroll-behavior: smooth; transition: background 0.3s, color 0.3s; }
     body {
       background: var(--bg);
       color: var(--text);
@@ -36,8 +51,11 @@ const { title = 'Jose Pedro Garcia — Dev' } = Astro.props
       font-weight: 300;
       overflow-x: hidden;
       cursor: none;
+      transition: background 0.3s, color 0.3s;
     }
     ::selection { background: var(--accent); color: #0a0a0a; }
+
+    /* ── CURSOR ── */
     #cursor {
       width: 8px; height: 8px;
       background: var(--accent);
@@ -45,7 +63,7 @@ const { title = 'Jose Pedro Garcia — Dev' } = Astro.props
       position: fixed;
       pointer-events: none;
       z-index: 9999;
-      transition: transform 0.15s ease;
+      transition: transform 0.15s ease, background 0.3s;
       transform: translate(-50%,-50%);
     }
     #cursor-ring {
@@ -58,17 +76,55 @@ const { title = 'Jose Pedro Garcia — Dev' } = Astro.props
       transform: translate(-50%,-50%);
       transition: width 0.2s, height 0.2s, border-color 0.2s;
     }
+    [data-theme="light"] #cursor-ring { border-color: rgba(90,138,0,0.3); }
+
     a { color: inherit; text-decoration: none; }
-    @keyframes fadeUp {
-      from { opacity:0; transform:translateY(28px); }
-      to   { opacity:1; transform:translateY(0); }
+
+    /* ── THEME TOGGLE ── */
+    #theme-toggle {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      cursor: none;
+      padding: 6px 10px;
+      border-radius: 2px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: border-color 0.2s, color 0.2s;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.05em;
     }
+    #theme-toggle:hover { border-color: var(--accent); color: var(--text); }
+
+    /* ── REVEAL ANIMATIONS ── */
     .reveal {
       opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.75s cubic-bezier(0.23,1,0.32,1), transform 0.75s cubic-bezier(0.23,1,0.32,1);
+      transform: translateY(28px);
+      transition: opacity 0.8s cubic-bezier(0.23,1,0.32,1),
+                  transform 0.8s cubic-bezier(0.23,1,0.32,1);
     }
     .reveal.visible { opacity:1; transform:translateY(0); }
+
+    /* Variantes de animación */
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-24px);
+      transition: opacity 0.8s cubic-bezier(0.23,1,0.32,1),
+                  transform 0.8s cubic-bezier(0.23,1,0.32,1);
+    }
+    .reveal-left.visible { opacity:1; transform:translateX(0); }
+
+    .reveal-scale {
+      opacity: 0;
+      transform: scale(0.95);
+      transition: opacity 0.7s cubic-bezier(0.23,1,0.32,1),
+                  transform 0.7s cubic-bezier(0.23,1,0.32,1);
+    }
+    .reveal-scale.visible { opacity:1; transform:scale(1); }
+
     ::-webkit-scrollbar { width: 3px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--border2); }
@@ -79,24 +135,74 @@ const { title = 'Jose Pedro Garcia — Dev' } = Astro.props
   <div id="cursor-ring"></div>
   <slot />
   <script>
+    // ── CURSOR ──
     const cur = document.getElementById('cursor')
     const ring = document.getElementById('cursor-ring')
     let mx=0,my=0,rx=0,ry=0
     document.addEventListener('mousemove', e => {
       mx=e.clientX; my=e.clientY
-      cur.style.left=mx+'px'; cur.style.top=my+'px'
+      if(cur) { cur.style.left=mx+'px'; cur.style.top=my+'px' }
     })
-    ;(function loop(){ rx+=(mx-rx)*0.1; ry+=(my-ry)*0.1
-      ring.style.left=rx+'px'; ring.style.top=ry+'px'
-      requestAnimationFrame(loop) })()
+    ;(function loop(){
+      rx+=(mx-rx)*0.1; ry+=(my-ry)*0.1
+      if(ring) { ring.style.left=rx+'px'; ring.style.top=ry+'px' }
+      requestAnimationFrame(loop)
+    })()
     document.querySelectorAll('a,button,[data-hover]').forEach(el=>{
-      el.addEventListener('mouseenter',()=>{ cur.style.transform='translate(-50%,-50%) scale(2.5)'; ring.style.width='48px'; ring.style.height='48px'; ring.style.borderColor='rgba(200,240,100,0.5)' })
-      el.addEventListener('mouseleave',()=>{ cur.style.transform='translate(-50%,-50%) scale(1)'; ring.style.width='32px'; ring.style.height='32px'; ring.style.borderColor='rgba(200,240,100,0.25)' })
+      el.addEventListener('mouseenter',()=>{
+        if(cur) cur.style.transform='translate(-50%,-50%) scale(2.5)'
+        if(ring) { ring.style.width='48px'; ring.style.height='48px'; ring.style.borderColor='rgba(200,240,100,0.5)' }
+      })
+      el.addEventListener('mouseleave',()=>{
+        if(cur) cur.style.transform='translate(-50%,-50%) scale(1)'
+        if(ring) { ring.style.width='32px'; ring.style.height='32px'; ring.style.borderColor='rgba(200,240,100,0.25)' }
+      })
     })
+
+    // ── REVEAL con IntersectionObserver ──
     const obs = new IntersectionObserver(entries=>{
-      entries.forEach(e=>{ if(e.isIntersecting){ const d=+(e.target.dataset.delay||0); setTimeout(()=>e.target.classList.add('visible'),d) } })
-    },{threshold:0.08})
-    document.querySelectorAll('.reveal').forEach(el=>obs.observe(el))
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          const d = +(e.target.dataset.delay||0)
+          setTimeout(()=> e.target.classList.add('visible'), d)
+          obs.unobserve(e.target) // solo anima una vez
+        }
+      })
+    },{threshold:0.1, rootMargin:'0px 0px -40px 0px'})
+
+    document.querySelectorAll('.reveal, .reveal-left, .reveal-scale').forEach(el=>obs.observe(el))
+
+    // ── THEME TOGGLE ──
+    const html = document.documentElement
+    const btn = document.getElementById('theme-toggle')
+    const icon = document.getElementById('theme-icon')
+    const label = document.getElementById('theme-label')
+
+    // Leer preferencia guardada
+    const saved = localStorage.getItem('theme')
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const initial = saved || (prefersDark ? 'dark' : 'light')
+    html.setAttribute('data-theme', initial)
+    updateToggleUI(initial)
+
+    function updateToggleUI(theme) {
+      if(!icon || !label) return
+      if(theme === 'dark') {
+        icon.textContent = '☀'
+        label.textContent = 'Light'
+      } else {
+        icon.textContent = '☾'
+        label.textContent = 'Dark'
+      }
+    }
+
+    btn?.addEventListener('click', () => {
+      const current = html.getAttribute('data-theme')
+      const next = current === 'dark' ? 'light' : 'dark'
+      html.setAttribute('data-theme', next)
+      localStorage.setItem('theme', next)
+      updateToggleUI(next)
+    })
   </script>
 </body>
 </html>
