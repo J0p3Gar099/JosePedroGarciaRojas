@@ -52,12 +52,8 @@ declare global {
   .hero-title span { display:block }
   .hero-desc { max-width:540px;color:var(--muted);font-size:16px;line-height:1.8;margin-bottom:3rem }
   .hero-actions { display:flex;gap:1rem;align-items:center;flex-wrap:wrap }
-  .btn-primary { display:inline-flex;align-items:center;gap:8px;padding:.75rem 1.5rem;background:var(--accent);color:#0a0a0a;font-size:13px;font-weight:500;border-radius:2px;transition:opacity .2s,box-shadow .3s;position:relative;overflow:hidden; }
-  .btn-primary:hover { opacity:.9;box-shadow:0 8px 30px rgba(200,240,100,0.25) }
-  .btn-github { display:inline-flex;align-items:center;gap:8px;padding:.75rem 1.5rem;border:1px solid var(--border);color:var(--muted);font-size:13px;font-weight:500;border-radius:2px;transition:border-color .2s,color .2s,box-shadow .3s;position:relative; }
-  .btn-github:hover { border-color:var(--accent);color:var(--text);box-shadow:0 8px 24px rgba(0,0,0,0.2) }
-  /* magnetic wrapper */
-  .mag { display:inline-block;position:relative; }
+  .btn-primary { display:inline-flex;align-items:center;gap:8px;padding:.75rem 1.5rem;background:var(--accent);color:#0a0a0a;font-size:13px;font-weight:500;border-radius:2px;transition:opacity .2s }
+  .btn-primary:hover { opacity:.85 }
   .hero-phone { font-family:var(--font-mono);font-size:12px;color:var(--muted) }
   .hero-scroll { position:absolute;bottom:2.5rem;right:2.5rem;display:flex;flex-direction:column;align-items:center;gap:8px }
   .hero-scroll span { font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:.15em;writing-mode:vertical-rl }
@@ -74,26 +70,6 @@ declare global {
   .sec-header { display:flex;align-items:center;gap:1.5rem;margin-bottom:4rem }
   .sec-tag { font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:.15em;white-space:nowrap }
   .sec-line { flex:1;height:1px;background:var(--border) }
-
-  /* ── SOBRE MÍ ── */
-  .about-me-section { padding:6rem 2.5rem;border-top:1px solid var(--border); }
-  .about-me-inner { max-width:900px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center; }
-  .about-me-text { }
-  .about-me-heading { font-family:var(--font-serif);font-size:clamp(2rem,3.5vw,3rem);font-weight:400;line-height:1.15;margin-bottom:1.5rem; }
-  .about-me-heading em { color:var(--muted); }
-  .about-me-p { color:var(--muted);font-size:14px;line-height:1.9;margin-bottom:1rem; }
-  .about-me-p span { color:var(--text); }
-  .about-me-stats { display:flex;flex-direction:column;gap:1.5rem; }
-  .about-stat { padding:1.5rem;border:1px solid var(--border);position:relative;overflow:hidden;transition:border-color .2s; }
-  .about-stat:hover { border-color:var(--accent); }
-  .about-stat-bar { position:absolute;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent); }
-  .about-stat-num { font-family:var(--font-serif);font-size:2rem;color:var(--accent);line-height:1;margin-bottom:.4rem; }
-  .about-stat-label { font-size:12px;color:var(--muted);font-family:var(--font-mono);letter-spacing:.08em; }
-
-  @media (max-width:768px) {
-    .about-me-section { padding:4rem 1.25rem; }
-    .about-me-inner { grid-template-columns:1fr;gap:2.5rem; }
-  }
 
   /* ── EXPERIENCIA ── */
   .exp-section { padding:6rem 2.5rem;border-top:1px solid var(--border) }
@@ -189,7 +165,6 @@ declare global {
 
 <!-- HAMBURGER MENU -->
 <div class="mobile-menu" id="mobileMenu">
-  <a href="#sobre-mi" onclick="closeMobileMenu()">Sobre mí</a>
   <a href="#experiencia" onclick="closeMobileMenu()">Experiencia</a>
   <a href="#skills" onclick="closeMobileMenu()">Skills</a>
   <a href="#contacto" onclick="closeMobileMenu()">Contacto</a>
@@ -199,17 +174,12 @@ declare global {
 <nav id="nav">
   <span class="nav-logo">JPG.dev</span>
   <div class="nav-links">
-    <a href="#sobre-mi">Sobre mí</a>
     <a href="#experiencia">Experiencia</a>
     <a href="#skills">Skills</a>
     <a href="#contacto">Contacto</a>
-    <button id="theme-toggle"><span id="theme-icon">☀</span><span id="theme-label">Light</span></button>
   </div>
-  <div style="display:flex;align-items:center;gap:1rem;">
-    <button id="theme-toggle-mobile" style="background:none;border:1px solid var(--border);color:var(--muted);cursor:none;padding:5px 9px;border-radius:2px;font-size:13px;"><span id="theme-icon-m">☀</span></button>
-    <div class="hamburger" id="hamburger" onclick="toggleMenu()">
-      <span></span><span></span><span></span>
-    </div>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
   </div>
 </nav>
 
@@ -227,24 +197,11 @@ declare global {
       Más de <span style="color:var(--text)">4 años</span> construyendo sistemas empresariales robustos. Especializado en APIs REST, optimización SQL y arquitecturas escalables en <span style="color:var(--text)">.NET / C#</span>.
     </p>
     <div class="hero-actions reveal" data-delay="480">
-      <span class="mag">
-        <a href="mailto:josepedrogr.99@gmail.com" class="btn-primary">
-          Contactar
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
-      </span>
-      <span class="mag">
-        <a href="https://github.com/J0p3Gar099" target="_blank" rel="noopener noreferrer" class="btn-github">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
-          GitHub
-        </a>
-      </span>
-      <span class="mag">
-        <a href="/cv.pdf" download="JosePedroGarciaRojas_CV.pdf" class="btn-github">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-          Descargar CV
-        </a>
-      </span>
+      <a href="mailto:josepedrogr.99@gmail.com" class="btn-primary">
+        Contactar
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+     
     </div>
   </div>
   <div class="hero-scroll">
@@ -272,47 +229,6 @@ declare global {
   <div class="about-item reveal" data-delay="240">
     <p class="about-label">IDIOMAS</p>
     <p class="about-val">Español · Inglés técnico</p>
-  </div>
-</section>
-
-<!-- SOBRE MÍ -->
-<section id="sobre-mi" class="about-me-section">
-  <div class="about-me-inner">
-    <div class="about-me-text">
-      <div class="sec-header reveal" style="margin-bottom:2rem">
-        <p class="sec-tag">01 — SOBRE MÍ</p>
-        <div class="sec-line"></div>
-      </div>
-      <h2 class="about-me-heading reveal" data-delay="100">
-        Complicarme la vida<br/><em>siempre fue el plan.</em>
-      </h2>
-      <p class="about-me-p reveal" data-delay="200">
-        Desde niño me pregunté cómo funcionaban las computadoras — no me bastaba con usarlas, quería entender qué había adentro. Esa curiosidad me llevó a estudiar una carrera técnica en la prepa, y después ingeniería en sistemas. No fue casualidad: fue una búsqueda constante de respuestas.
-      </p>
-      <p class="about-me-p reveal" data-delay="300">
-        Hoy construyo sistemas backend en <span>.NET/C#</span> y <span>Java</span> que resuelven problemas reales en producción. Me motiva la sensación de tomar algo roto o lento y dejarlo funcionando mejor — ese momento en que los números lo confirman.
-      </p>
-      <p class="about-me-p reveal" data-delay="400">
-        Fuera del trabajo sigo aprendiendo: cursos, nuevas tecnologías, arquitecturas. No porque deba, sino porque me gusta estar un paso adelante.
-      </p>
-    </div>
-    <div class="about-me-stats">
-      <div class="about-stat reveal-scale" data-delay="150">
-        <div class="about-stat-bar" style="width:90%"></div>
-        <p class="about-stat-num">4+</p>
-        <p class="about-stat-label">AÑOS EN SISTEMAS EMPRESARIALES</p>
-      </div>
-      <div class="about-stat reveal-scale" data-delay="250">
-        <div class="about-stat-bar" style="width:70%"></div>
-        <p class="about-stat-num">2</p>
-        <p class="about-stat-label">STACKS PRINCIPALES · .NET Y JAVA</p>
-      </div>
-      <div class="about-stat reveal-scale" data-delay="350">
-        <div class="about-stat-bar" style="width:55%"></div>
-        <p class="about-stat-num">∞</p>
-        <p class="about-stat-label">PROBLEMAS QUE RESOLVER</p>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -464,7 +380,7 @@ declare global {
 <section id="contacto" class="contact-section">
   <div class="contact-inner">
     <div>
-      <p class="reveal" style="font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:.15em;margin-bottom:1.5rem">06 — CONTACTO</p>
+      <p class="reveal" style="font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:.15em;margin-bottom:1.5rem">05 — CONTACTO</p>
       <h2 class="contact-title reveal" data-delay="100">
         Hablemos de<br/><em>tu próximo proyecto.</em>
       </h2>
@@ -492,13 +408,6 @@ declare global {
           <p class="contact-card-val">Cuautitlán, Estado de México</p>
         </div>
       </div>
-      <a href="https://github.com/J0p3Gar099" target="_blank" rel="noopener noreferrer" class="contact-card">
-        <div>
-          <p class="contact-card-label">GITHUB</p>
-          <p class="contact-card-val">J0p3Gar099</p>
-        </div>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="color:var(--muted)"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
-      </a>
     </div>
   </div>
 </section>
@@ -548,43 +457,6 @@ declare global {
   }
   window.toggleMenu = toggleMenu
   window.closeMobileMenu = closeMobileMenu
-
-  // Sync mobile theme toggle
-  const mobileToggle = document.getElementById('theme-toggle-mobile')
-  mobileToggle?.addEventListener('click', () => {
-    const h = document.documentElement
-    const next = h.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
-    h.setAttribute('data-theme', next)
-    localStorage.setItem('theme', next)
-    const iconM = document.getElementById('theme-icon-m')
-    if(iconM) iconM.textContent = next === 'dark' ? '☀' : '☾'
-    // sync desktop icon too
-    const icon = document.getElementById('theme-icon')
-    const label = document.getElementById('theme-label')
-    if(icon) icon.textContent = next === 'dark' ? '☀' : '☾'
-    if(label) label.textContent = next === 'dark' ? 'Light' : 'Dark'
-  })
-  // ── MAGNETIC BUTTONS ──
-  document.querySelectorAll('.mag').forEach(wrapper => {
-    const btn = wrapper.querySelector('a, button')
-    if (!btn) return
-
-    wrapper.addEventListener('mousemove', e => {
-      const rect = wrapper.getBoundingClientRect()
-      const cx = rect.left + rect.width / 2
-      const cy = rect.top + rect.height / 2
-      const dx = e.clientX - cx
-      const dy = e.clientY - cy
-      const strength = 0.35
-      btn.style.transform = `translate(${dx * strength}px, ${dy * strength}px)`
-      btn.style.transition = 'transform 0.1s ease'
-    })
-
-    wrapper.addEventListener('mouseleave', () => {
-      btn.style.transform = 'translate(0px, 0px)'
-      btn.style.transition = 'transform 0.5s cubic-bezier(0.23,1,0.32,1)'
-    })
-  })
 </script>
 
 </Layout>
